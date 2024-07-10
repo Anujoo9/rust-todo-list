@@ -18,6 +18,10 @@ impl TodoItem{
             completed: false,
         }
     }
+
+    fn update_description(&mut self, new_description: String){
+        self.description = new_description;
+    }
 }
 
 #[derive (Debug, Serialize, Deserialize)]
@@ -65,6 +69,15 @@ impl TodoList{
             println!("{:?}", item);
         }
     }
+
+    fn update_item(&mut self, id:u32, new_description: String) -> Result<(), String>{
+        if let Some(item) = self.items.iter_mut().find(|item| item.id ==id){
+            item.update_description(new_description);
+            Ok(())
+        }else{
+            Err(format!("Item with ID {} not found ", id))
+        }
+    }
 }
 
 
@@ -87,7 +100,8 @@ fn main(){
         println!("3. Mark as completed");
         println!("4. Display items");
         println!("5. Save items to file");
-        println!("6. Exit");
+        println!("6. Edit item");
+        println!("7. Exit");
 
         let mut choice: String = String::new();
         io::stdin().read_line(&mut choice).expect("Failed to read line");
@@ -128,7 +142,23 @@ fn main(){
                     println!("Todo items saved to file successfully");
                 }
             }
-            6=> break,
+            6=> {
+                let mut id_input = String::new();
+                println!("Enter the item ID to edit:");
+                io::stdin().read_line(&mut id_input).expect("Failed to read line");
+                let id:u32 =  id_input.trim().parse().expect("Please enter a numnber");
+
+                let mut new_description = String::new();
+                println!("Enter the new description");
+                io::stdin().read_line(&mut new_description).expect("Failed to read line;");
+                let new_description = new_description.trim().to_string();
+                if let Err(err) = todo_list.update_item(id, new_description){
+                    eprintln!("Failed to update the item: {}", err);
+                }else{
+                    println!("Item updated succesfully");
+                }
+            }
+            7=> break,
             _ => println!("Invalid choice"),
         }
     }
