@@ -18,6 +18,10 @@ impl TodoItem{
             completed: false,
         }
     }
+
+    fn update_description(&mut self, new_description: String){
+        self.description = new_description;
+    }
 }
 
 #[derive (Debug, Serialize, Deserialize)]
@@ -65,6 +69,15 @@ impl TodoList{
             println!("{:?}", item);
         }
     }
+
+    fn update_item(&mut self, id:u32, new_description: String) -> Result<(), String>{
+        if let Some(item) = self.items.iter_mut().find(|item| item.id ==id){
+            item.update_description(new_description);
+            Ok(())
+        }else{
+            Err(format!("Item with ID {} not found ", id))
+        }
+    }
 }
 
 
@@ -87,7 +100,8 @@ fn main(){
         println!("3. Mark as completed");
         println!("4. Display items");
         println!("5. Save items to file");
-        println!("6. Exit");
+        println!("6. Edit item");
+        println!("7. Exit");
 
         let mut choice: String = String::new();
         io::stdin().read_line(&mut choice).expect("Failed to read line");
