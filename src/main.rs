@@ -142,7 +142,23 @@ fn main(){
                     println!("Todo items saved to file successfully");
                 }
             }
-            6=> break,
+            6=> {
+                let mut id_input = String::new();
+                println!("Enter the item ID to edit:");
+                io::stdin().read_line(&mut id_input).expect("Failed to read line");
+                let id:u32 =  id_input.trim().parse().expect("Please enter a numnber");
+
+                let mut new_description = String::new();
+                println!("Enter the new description");
+                io::stdin().read_line(&mut new_description).expect("Failed to read line;");
+                let new_description = new_description.trim().to_string();
+                if let Err(err) = todo_list.update_item(id, new_description){
+                    eprintln!("Failed to update the item: {}", err);
+                }else{
+                    println!("Item updated succesfully");
+                }
+            }
+            7=> break,
             _ => println!("Invalid choice"),
         }
     }
